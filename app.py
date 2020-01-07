@@ -1,16 +1,21 @@
-from flask import Flask
+import json
+from operator import or_
+
+from flask import Flask, request, jsonify
 
 import config
 import model
 import robot_config
+from api_opt import api
 from ext import db
+from flask_cors import CORS
 
 app = Flask(__name__)
 app.config.from_object(config)
+app.register_blueprint(api)
 db.init_app(app)
+CORS(app, supports_credentials=True)
 app.app_context().push()
-print(robot_config.get_text_from_robot("你好"))
-print(robot_config.getAddress("王磊"))
 
 
 @app.route('/')
@@ -29,5 +34,18 @@ def add_test():
     return "111"
 
 
+@app.route("/queryUser", methods=['POST'])
+def queryUser():
+    page = request.args.get('page', 1, type=int)
+    rows = request.args.get('rows', 10, type=int)
+    count = model.User.query.count()
+    users = model.User.query.filter().offset(rows * (page - 1)).limit(10).all()
+    print(users)
+    print(json.dumps(users))
+    for user in users:
+        print(user.trueName)
+    return jsonify({'code': '000', 'msg': '查询成功', 'count': count})
+
+
 if __name__ == '__main__':
-    app.run()
+    app.run(host='192.168.10.130')

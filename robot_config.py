@@ -2,13 +2,12 @@ import json, model
 import requests
 
 from pyhanlp import *
-# from app import bot
 
 # 群里保存文件地址
-# sourceSavePath = '/home/deployer/ReceiveFile/'
+# sourceSavePath =  os.sep.join(["E:", "ReceiveFile"])
 from sqlalchemy import or_
 
-sourceSavePath = os.sep.join(["/home", "deployer", "ReceiveFile"])
+sourceSavePath = os.sep.join(["E:", "ReceiveFile", "Answer"])
 sourceSavePath2 = os.sep.join(["/home", "deployer", "ReceiveFile_ZWZX"])
 
 # 转发消息保存文件地址

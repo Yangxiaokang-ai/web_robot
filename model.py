@@ -11,7 +11,7 @@ class Config(db.Model):
 
 class User(db.Model):
     __tablename__ = 'user2'
-    id=db.Column(db.Integer, primary_key = True, autoincrement = True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     orgNum = db.Column(db.String(255))
     userId = db.Column(db.String(255))
     orgId = db.Column(db.String(255))
@@ -23,6 +23,14 @@ class User(db.Model):
     deptName2 = db.Column(db.String(255))
     pid = db.Column(db.String(255))
     deptName = db.Column(db.String(255))
+
+    def jsonStr(self):
+        jsonData = {
+            'id': self.id,
+            'userName': self.userName,
+
+        }
+        return jsonData
 
 
 class MessageLog(db.Model):
