@@ -251,9 +251,9 @@ def insertIntoLog(msg):
 
 
 test = bot.groups().search("测试2")[0]
+test2 = bot.groups().search("测试机器人")[0]
 zb_sf = bot.groups().search("总部及省分OSS2.0")[0]
 zwzx = bot.groups().search("智能网络中心")[0]
-
 zgs = bot.friends().search("13653971543")[0]
 xuk_z = bot.friends().search("赵旭凯")[0]
 
