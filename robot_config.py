@@ -2,17 +2,16 @@ import json
 import re
 import time
 
+import requests
+from pyhanlp import *
+# 群里保存文件地址
+# sourceSavePath =  os.sep.join(["E:", "ReceiveFile"])
+from sqlalchemy import or_
+
 import app
 from config import replySavePath, g5_savePath, sourceSavePath
 from ext import db, bot
 from model import Questions, User, ReplyLog, MessageLog
-import requests
-
-from pyhanlp import *
-
-# 群里保存文件地址
-# sourceSavePath =  os.sep.join(["E:", "ReceiveFile"])
-from sqlalchemy import or_, desc
 
 r1 = u'[a-zA-Z0-9’!"#$%&\'()*+,-./:;<=>?@，。?★、…【】《》？“”‘’！[\\]^_`{|}~]+'
 
@@ -266,12 +265,10 @@ def insertIntoLog(msg):
             print(e)
 
 
-def send2Group():
-    result = ReplyLog.query.filter(ReplyLog.msg_type == 'Text').order_by(desc(ReplyLog.message_createtime)).first()
-    print(result.content)
-
-
 test = bot.groups().search("测试2")[0]
+zb_sf = bot.groups().search("总部及省分OSS2.0")[0]
+zwzx = bot.groups().search("智能网络中心")[0]
+
 zgs = bot.friends().search("13653971543")[0]
 xuk_z = bot.friends().search("赵旭凯")[0]
 
@@ -288,7 +285,7 @@ def save_5g(msg):
         return save5g(msg)
 
 
-@bot.register(test)
+@bot.register([test, zwzx, zb_sf])
 def save_message(msg):
     with app.app.app_context():
         if msg.is_at:

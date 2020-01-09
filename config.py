@@ -19,7 +19,7 @@ SQLALCHEMY_TRACK_MODIFICATIONS = True
 SQLALCHEMY_POOL_SIZE = 10
 SQLALCHEMY_MAX_OVERFLOW = 5
 
-messageFilePath = os.sep.join(["E:", "ReceiveFile", "message"])
+messageFilePath = os.sep.join(["/home", "deployer", "ReceiveFile", "message"])
 replySavePath = os.sep.join(["/home", "deployer", "ReplyFile"])
 g5_savePath = os.sep.join(["/home", "deployer", "g5_save"])
-sourceSavePath = os.sep.join(["E:", "ReceiveFile", "Answer"])
+sourceSavePath = os.sep.join(["/home", "deployer", "ReceiveFile", "Answer"])
