@@ -16,7 +16,7 @@ def add_message():
     group = bot.groups().search(request.form.get("sendGroup"))[0]
     if message_type == 'image' or message_type == 'file':
         newFile = request.files.get('file')
-        robot_config.mkdir(os.sep.join([config.messageFilePath, newFile, message_type]))
+        config.mkdir(os.sep.join([config.messageFilePath, newFile, message_type]))
         save_path = os.sep.join([config.sourceSavePath, newFile.filename])
         newFile.save(save_path)
         message.content = save_path

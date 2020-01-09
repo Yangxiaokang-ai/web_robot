@@ -21,15 +21,15 @@ scheduler.start()
 app.app_context().push()
 
 
-@scheduler.scheduler.scheduled_job(trigger='interval', id='send2Group', seconds=2)
+@scheduler.scheduler.scheduled_job(trigger='cron', id='send2Group', day_of_week='mon-fri', hour=10, minute=30)
 def send2Group():
     with app.app_context():
         result = ReplyLog.query.filter(ReplyLog.msg_type == 'Text').order_by(desc(ReplyLog.message_createtime)).first()
         test2[0].send(result.content)
 
 
-@scheduler.scheduler.scheduled_job(trigger='interval', id='send2Group', seconds=2)
-def send2Group():
+@scheduler.scheduler.scheduled_job(trigger='cron', id='send2Group', day_of_week='mon-fri', hour=10, minute=3)
+def send2Group2():
     with app.app_context():
         result = ReplyLog.query.filter(ReplyLog.msg_type == 'Text').order_by(desc(ReplyLog.message_createtime)).first()
         test2[0].send_images(result.content)

@@ -9,7 +9,7 @@ from pyhanlp import *
 from sqlalchemy import or_
 
 import app
-from config import replySavePath, g5_savePath, sourceSavePath
+from config import replySavePath, g5_savePath, sourceSavePath, mkdir
 from ext import db, bot
 from model import Questions, User, ReplyLog, MessageLog
 
@@ -39,21 +39,6 @@ def getFriendConfig():
     friends.append(bot.groups().search(friend_config.name))
     return friends
 '''
-
-
-def mkdir(path):
-    path = path.strip()
-    path = path.rstrip(os.sep)
-    isExist = os.path.exists(path)
-    if not isExist:
-        try:
-            os.makedirs(path)
-        except Exception as e:
-            print(e)
-            return False
-        return True
-    else:
-        return True
 
 
 def get_text_from_robot(msg):
