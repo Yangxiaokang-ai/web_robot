@@ -1,3 +1,5 @@
+import os
+
 from wxpy import Bot
 
 DIALECT = 'mysql'
@@ -13,6 +15,11 @@ SQLALCHEMY_DATABASE_URI = '{}+{}://{}:{}@{}:{}/{}?charset=utf8'.format(
 )
 SQLALCHEMY_COMMIT_ON_TEARDOWN = True
 SQLALCHEMY_TRACK_MODIFICATIONS = True
-#BOT = Bot(cache_path=True, console_qr=True)
+# BOT = Bot(cache_path=True, console_qr=True)
 SQLALCHEMY_POOL_SIZE = 10
 SQLALCHEMY_MAX_OVERFLOW = 5
+
+messageFilePath = os.sep.join(["E:", "ReceiveFile", "message"])
+replySavePath = os.sep.join(["/home", "deployer", "ReplyFile"])
+g5_savePath = os.sep.join(["/home", "deployer", "g5_save"])
+sourceSavePath = os.sep.join(["E:", "ReceiveFile", "Answer"])

@@ -3,6 +3,7 @@ import re
 import time
 
 import app
+from config import replySavePath, g5_savePath, sourceSavePath
 from ext import db, bot
 from model import Questions, User, ReplyLog, MessageLog
 import requests
@@ -14,14 +15,9 @@ from pyhanlp import *
 from sqlalchemy import or_, desc
 
 r1 = u'[a-zA-Z0-9’!"#$%&\'()*+,-./:;<=>?@，。?★、…【】《》？“”‘’！[\\]^_`{|}~]+'
-sourceSavePath = os.sep.join(["E:", "ReceiveFile", "Answer"])
-messageFilePath = os.sep.join(["E:", "ReceiveFile", "message"])
-sourceSavePath2 = os.sep.join(["/home", "deployer", "ReceiveFile_ZWZX"])
 
 # 转发消息保存文件地址
-replySavePath = os.sep.join(["/home", "deployer", "ReplyFile"])
 
-g5_savePath = os.sep.join(["/home", "deployer", "g5_save"])
 
 # bot.self.send_file(os.sep.join(["/home", "deployer", "ReceiveFile", "Answer", "维沃.png"]))
 
