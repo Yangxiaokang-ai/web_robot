@@ -1,3 +1,5 @@
+from wxpy import Bot
+
 DIALECT = 'mysql'
 DRIVER = 'pymysql'
 USERNAME = 'root'
@@ -11,6 +13,6 @@ SQLALCHEMY_DATABASE_URI = '{}+{}://{}:{}@{}:{}/{}?charset=utf8'.format(
 )
 SQLALCHEMY_COMMIT_ON_TEARDOWN = True
 SQLALCHEMY_TRACK_MODIFICATIONS = True
-
+#BOT = Bot(cache_path=True, console_qr=True)
 SQLALCHEMY_POOL_SIZE = 10
 SQLALCHEMY_MAX_OVERFLOW = 5

@@ -40,6 +40,7 @@ class MessageLog(db.Model):
     message_sender = db.Column(db.String(255))
     message_type = db.Column(db.String(255))
     message_createtime = db.Column(db.String(255))
+    message_from = db.Column(db.String(255))
 
 
 class MessageLogZwzx(db.Model):
@@ -75,3 +76,22 @@ class BotConfig(db.Model):
     createtime = db.Column(db.String(255))
     type = db.Column(db.String(255))
     log_table = db.Column(db.String(255))
+    logType = db.Column(db.String(255))
+
+
+class DictData(db.Model):
+    __tablename__ = 'dict_data'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(255))
+    value = db.Column(db.String(255))
+    description = db.Column(db.String(255))
+
+
+class SendMessage(db.Model):
+    __tablename__ = 'send_message'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    type = db.Column(db.String(255))
+    content = db.Column(db.Text)
+    sendGroup = db.Column(db.String(255))
+    createTime = db.Column(db.String(255))
+    sendType = db.Column(db.String(255))

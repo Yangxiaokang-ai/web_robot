@@ -1,13 +1,21 @@
-import json, model
+import json
+import re
+import time
+
+import app
+from ext import db, bot
+from model import Questions, User, ReplyLog, MessageLog
 import requests
 
 from pyhanlp import *
 
 # 群里保存文件地址
 # sourceSavePath =  os.sep.join(["E:", "ReceiveFile"])
-from sqlalchemy import or_
+from sqlalchemy import or_, desc
 
+r1 = u'[a-zA-Z0-9’!"#$%&\'()*+,-./:;<=>?@，。?★、…【】《》？“”‘’！[\\]^_`{|}~]+'
 sourceSavePath = os.sep.join(["E:", "ReceiveFile", "Answer"])
+messageFilePath = os.sep.join(["E:", "ReceiveFile", "message"])
 sourceSavePath2 = os.sep.join(["/home", "deployer", "ReceiveFile_ZWZX"])
 
 # 转发消息保存文件地址
@@ -75,7 +83,7 @@ def getAddress(msg):
         if str(term.nature) == "ns":
             name = str(term.word)
     if dept == "":
-        result = model.User.query.filter(model.User.trueName.like("%" + name + "%")).all()
+        result = User.query.filter(User.trueName.like("%" + name + "%")).all()
         if len(result) > 0:
             if 50 > len(result) > 1:
                 users = "你可能要找这些\n"
@@ -109,8 +117,8 @@ def getAddress(msg):
         else:
             return "对不起，我们的通讯录里暂时没有这个部门,我们会继续努力的"
     elif name == "":
-        result = model.User.query.filter(
-            or_(model.User.deptName2.like("%" + dept + "%"), model.User.deptName.like("%" + dept + "%"))).all()
+        result = User.query.filter(
+            or_(User.deptName2.like("%" + dept + "%"), User.deptName.like("%" + dept + "%"))).all()
         if len(result) > 0:
             if 50 > len(result) > 1:
                 users = "你可能要找这些\n"
@@ -143,9 +151,9 @@ def getAddress(msg):
         else:
             return "对不起，我们的通讯录里暂时没有这个部门,我们会继续努力的"
     else:
-        result = model.User.query.filter(
-            or_(model.User.deptName2.like("%" + dept + "%"), model.User.deptName.like("%" + dept + "%")),
-            model.User.trueName.like("%" + name + "%")).all()
+        result = User.query.filter(
+            or_(User.deptName2.like("%" + dept + "%"), User.deptName.like("%" + dept + "%")),
+            User.trueName.like("%" + name + "%")).all()
         if len(result) > 0:
             if 50 > len(result) > 1:
                 users = "你可能要找这些\n"
@@ -177,3 +185,137 @@ def getAddress(msg):
                     return users + "\n对不起您要找的人重名情况太多了,请带上部门名称,我会变得更加准确哦"
         else:
             return "对不起，我们的通讯录里暂时没有这个部门,我们会继续努力的"
+
+
+def removePunctuation(key):
+    strings = re.sub(r1, "", key).strip()
+    return strings
+
+
+def getAnswerFromData(text):
+    result = None
+    try:
+        result = Questions.query.filter(Questions.keywords.like("%" + text + "%")).first()
+        return result
+    except Exception as e:
+        print(e)
+        return result
+
+
+def insertReplyLog(msg):
+    replyLog = ReplyLog()
+    replyLog.msg_type = msg.type
+    replyLog.message_createtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+    if msg.type == 'Text':
+        if "日报" in msg.text:
+            replyLog.content = msg.text
+            db.session.add(replyLog)
+            db.session.commit()
+            return "小助手将会准时发送"
+    else:
+        if mkdir(os.sep.join([replySavePath, msg.type])):
+            save_path = os.sep.join([replySavePath, msg.type, msg.file_name])
+            replyLog.content = save_path
+            try:
+                if msg.type == "Picture":
+                    msg.get_file(save_path)
+                    db.session.add(replyLog)
+                    db.session.commit()
+                    return "小助手将会准时发送"
+                else:
+                    msg.forward(test)
+                    db.session.add(replyLog)
+                    db.session.commit()
+                    return "小助手转发成功"
+            except Exception as e:
+                print(e)
+                return "暂不支持"
+
+
+def save5g(msg):
+    if msg.type == "Attachment":
+        if mkdir(os.sep.join([g5_savePath, msg.type])):
+            save_path = os.sep.join([g5_savePath, msg.type, msg.file_name])
+            try:
+                msg.get_file(save_path)
+                questions = Questions.query.get(8)
+                questions.answer = save_path
+                db.session.add(questions)
+                db.session.commit()
+            except Exception as e:
+                print(e)
+
+    else:
+        return
+
+
+def insertIntoLog(msg):
+    message_log = MessageLog()
+    message_log.message_createtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+    message_log.message_type = msg.type
+    message_log.message_sender = msg.member.name
+    message_log.message_from = msg.sender.name
+    if msg.type == 'Text':
+        message_log.content = msg.text
+        db.session.add(message_log)
+        db.session.commit()
+    else:
+        save_path = os.sep.join([sourceSavePath, msg.type, msg.file_name])
+        try:
+            msg.get_file(save_path)
+            message_log.content = save_path
+            db.session.add(message_log)
+            db.session.commit()
+        except Exception as e:
+            print(e)
+
+
+def send2Group():
+    result = ReplyLog.query.filter(ReplyLog.msg_type == 'Text').order_by(desc(ReplyLog.message_createtime)).first()
+    print(result.content)
+
+
+test = bot.groups().search("测试2")[0]
+zgs = bot.friends().search("13653971543")[0]
+xuk_z = bot.friends().search("赵旭凯")[0]
+
+
+@bot.register(zgs)
+def reply_daily(msg):
+    with app.app.app_context():
+        return insertReplyLog(msg)
+
+
+@bot.register(xuk_z)
+def save_5g(msg):
+    with app.app.app_context():
+        return save5g(msg)
+
+
+@bot.register(test)
+def save_message(msg):
+    with app.app.app_context():
+        if msg.is_at:
+            if "\u2005" in msg.text:
+                text = msg.text.strip().split("\u2005", 1)[1]
+            else:
+                text = msg.text.strip().split(" ", 1)[1]
+            if msg.type == 'Text':
+                if "帮助" in msg.text:
+                    return "你可以试试这样问问我，比如:\n维沃的下载地址是?\n沃运维账号怎么申请？\n沃运维自助菜单添加？\n或者跟我闲聊。"
+                elif "联系方式" in text or "电话" in text or "邮箱" in text or '手机' in text:
+                    return getAddress(text)
+                else:
+                    question = getAnswerFromData(text)
+                    if question:
+                        if question.answer_type == 'Images':
+                            msg.reply_image(question.answer)
+                        elif question.answer_type == 'File':
+                            msg.reply_file(question.answer)
+                        else:
+                            return question.answer
+                    else:
+                        return get_text_from_robot(text)
+        else:
+            insertIntoLog(msg)
+            return
