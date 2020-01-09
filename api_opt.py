@@ -3,8 +3,9 @@ import os
 
 from flask import jsonify, request, Blueprint
 from sqlalchemy import or_, and_, desc
+from werkzeug.utils import secure_filename
 
-import config
+import config2
 from ext import db
 from model import User, BotConfig, Questions, DictData, MessageLog, MessageLogZwzx, ReplyLog
 
@@ -127,7 +128,7 @@ def addQuestion():
 
     if answer_type == 'File' or answer_type == 'Images':
         newFile = request.files.get('file')
-        save_path = os.sep.join([config.sourceSavePath, newFile.filename])
+        save_path = os.sep.join([config2.sourceSavePath, newFile.filename])
         newFile.save(save_path)
         question.answer = save_path
 
@@ -148,7 +149,7 @@ def updateQuestion():
     if answer_type == 'File' or answer_type == 'Images':
         newFile = request.files.get('file')
         if newFile:
-            save_path = os.sep.join([config.sourceSavePath, newFile.filename])
+            save_path = os.sep.join([config2.sourceSavePath, newFile.filename])
             newFile.save(save_path)
             jsons['answer'] = save_path
     Questions.query.filter(Questions.id == request.form.get("id")).update(jsons, synchronize_session=False)

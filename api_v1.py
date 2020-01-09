@@ -2,7 +2,7 @@ import os
 
 from flask import jsonify, request, Blueprint
 
-import config
+import config2
 from ext import db, bot
 from model import SendMessage
 
@@ -16,8 +16,8 @@ def add_message():
     group = bot.groups().search(request.form.get("sendGroup"))[0]
     if message_type == 'image' or message_type == 'file':
         newFile = request.files.get('file')
-        config.mkdir(os.sep.join([config.messageFilePath, newFile, message_type]))
-        save_path = os.sep.join([config.sourceSavePath, newFile.filename])
+        config2.mkdir(os.sep.join([config2.messageFilePath, newFile, message_type]))
+        save_path = os.sep.join([config2.sourceSavePath, newFile.filename])
         newFile.save(save_path)
         message.content = save_path
         group.send_image(save_path)

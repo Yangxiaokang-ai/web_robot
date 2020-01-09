@@ -2,21 +2,26 @@ import json
 import re
 import time
 
-import requests
-from pyhanlp import *
-# 群里保存文件地址
-# sourceSavePath =  os.sep.join(["E:", "ReceiveFile"])
-from sqlalchemy import or_
-
 import app
-from config import replySavePath, g5_savePath, sourceSavePath, mkdir
 from ext import db, bot
 from model import Questions, User, ReplyLog, MessageLog
+import requests
+
+from pyhanlp import *
+
+# 群里保存文件地址
+# sourceSavePath =  os.sep.join(["E:", "ReceiveFile"])
+from sqlalchemy import or_, desc
 
 r1 = u'[a-zA-Z0-9’!"#$%&\'()*+,-./:;<=>?@，。?★、…【】《》？“”‘’！[\\]^_`{|}~]+'
+sourceSavePath = os.sep.join(["E:", "ReceiveFile", "Answer"])
+messageFilePath = os.sep.join(["E:", "ReceiveFile", "message"])
+sourceSavePath2 = os.sep.join(["/home", "deployer", "ReceiveFile_ZWZX"])
 
 # 转发消息保存文件地址
+replySavePath = os.sep.join(["/home", "deployer", "ReplyFile"])
 
+g5_savePath = os.sep.join(["/home", "deployer", "g5_save"])
 
 # bot.self.send_file(os.sep.join(["/home", "deployer", "ReceiveFile", "Answer", "维沃.png"]))
 
@@ -39,6 +44,21 @@ def getFriendConfig():
     friends.append(bot.groups().search(friend_config.name))
     return friends
 '''
+
+
+def mkdir(path):
+    path = path.strip()
+    path = path.rstrip(os.sep)
+    isExist = os.path.exists(path)
+    if not isExist:
+        try:
+            os.makedirs(path)
+        except Exception as e:
+            print(e)
+            return False
+        return True
+    else:
+        return True
 
 
 def get_text_from_robot(msg):
@@ -252,13 +272,14 @@ def insertIntoLog(msg):
 
 test = bot.groups().search("测试2")[0]
 test2 = bot.groups().search("测试机器人")[0]
-zb_sf = bot.groups().search("总部及省分OSS2.0")[0]
-zwzx = bot.groups().search("智能网络中心")[0]
-zgs = bot.friends().search("13653971543")[0]
+zgs = bot.friends().search("张恭硕")[0]
+yxk = bot.friends().search("13653971543")[0]
 xuk_z = bot.friends().search("赵旭凯")[0]
+zwzx = bot.groups().search("智能网络中心")[0]
+zb_sf = bot.groups().search("总部及省分OSS2.0")[0]
 
 
-@bot.register(zgs)
+@bot.register([zgs, yxk])
 def reply_daily(msg):
     with app.app.app_context():
         return insertReplyLog(msg)
@@ -270,7 +291,7 @@ def save_5g(msg):
         return save5g(msg)
 
 
-@bot.register([test, zwzx, zb_sf])
+@bot.register([test, zb_sf, zwzx, test2])
 def save_message(msg):
     with app.app.app_context():
         if msg.is_at:
