@@ -14,7 +14,7 @@ app.register_blueprint(api)
 app.register_blueprint(api_v1)
 db.init_app(app)
 CORS(app, supports_credentials=True)
-test2 = bot.groups().search("测试2")
+zb_sf = bot.groups().search("总部及省分OSS2.0")[0]
 scheduler.init_app(app)
 scheduler.start()
 
@@ -25,15 +25,17 @@ app.app_context().push()
 def send2Group():
     with app.app_context():
         result = ReplyLog.query.filter(ReplyLog.msg_type == 'Text').order_by(desc(ReplyLog.message_createtime)).first()
-        test2[0].send(result.content)
+        zb_sf.send(result.content)
+        print(result.content)
 
 
-@scheduler.scheduler.scheduled_job(trigger='cron', id='send2Group', day_of_week='mon-fri', hour=10, minute=3)
+@scheduler.scheduler.scheduled_job(trigger='cron', id='send2Group2', day_of_week='mon-fri', hour=10, minute=30)
 def send2Group2():
     with app.app_context():
         result = ReplyLog.query.filter(ReplyLog.msg_type == 'Text').order_by(desc(ReplyLog.message_createtime)).first()
-        test2[0].send_images(result.content)
+        zb_sf.send_images(result.content)
+        print(result.content)
 
 
 if __name__ == '__main__':
-    app.run(host='192.168.10.130')
+    app.run(host="10.126.141.229", port=8999)
