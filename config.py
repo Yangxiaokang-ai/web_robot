@@ -3,9 +3,9 @@ from wxpy import Bot
 DIALECT = 'mysql'
 DRIVER = 'pymysql'
 USERNAME = 'root'
-PASSWORD = 'root'
+PASSWORD = '1qaz!QAZ'
 HOST = '127.0.0.1'
-PORT = '3306'
+PORT = '3396'
 DATABASE = 'robot'
 
 SQLALCHEMY_DATABASE_URI = '{}+{}://{}:{}@{}:{}/{}?charset=utf8mb4'.format(

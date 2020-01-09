@@ -1,18 +1,12 @@
-import json
-from operator import or_
-from threading import Thread
-
-from flask import Flask, request, jsonify, g
+from flask import Flask
+from flask_cors import CORS
 from sqlalchemy import desc
-from wxpy import Bot, embed
 
 import config
-from model import ReplyLog
-import robot_config
 from api_opt import api
 from api_v1 import api_v1
 from ext import db, bot, scheduler
-from flask_cors import CORS
+from model import ReplyLog
 
 app = Flask(__name__)
 app.config.from_object(config)
