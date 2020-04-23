@@ -3,7 +3,6 @@ import os
 
 from flask import jsonify, request, Blueprint
 from sqlalchemy import or_, and_, desc
-from werkzeug.utils import secure_filename
 
 import config2
 from ext import db

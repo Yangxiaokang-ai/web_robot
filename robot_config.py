@@ -2,17 +2,16 @@ import json
 import re
 import time
 
-import app
-from config2 import replySavePath, g5_savePath, sourceSavePath
-from ext import db, bot
-from model import Questions, User, ReplyLog, MessageLog
 import requests
-
 from pyhanlp import *
-
 # 群里保存文件地址
 # sourceSavePath =  os.sep.join(["E:", "ReceiveFile"])
-from sqlalchemy import or_, desc
+from sqlalchemy import or_
+
+import app
+from config2 import replySavePath, g5_savePath, messageFilePath
+from ext import db, bot
+from model import Questions, User, ReplyLog, MessageLog
 
 r1 = u'[a-zA-Z0-9’!"#$%&\'()*+,-./:;<=>?@，。?★、…【】《》？“”‘’！[\\]^_`{|}~]+'
 
@@ -85,6 +84,7 @@ def getAddress(msg):
                                                                                          str(user.telPhone),
                                                                                          str(user.deptName2),
                                                                                          str(user.deptName))
+                return users
             elif len(result) == 1:
                 return '姓名:{0}\n手机:{1}\n邮箱:{2}\n固话:{3}\n部门:{4}\n父级部门:{5}\n'.format(str(result[0].trueName),
                                                                                    str(result[0].mobliePhone),
@@ -92,7 +92,6 @@ def getAddress(msg):
                                                                                    str(result[0].telPhone),
                                                                                    str(result[0].deptName2),
                                                                                    str(result[0].deptName))
-                print(222)
             else:
                 users = "您可能要找这些\n"
                 for i in range(0, 50):
@@ -120,6 +119,7 @@ def getAddress(msg):
                                                                                          str(user.telPhone),
                                                                                          str(user.deptName2),
                                                                                          str(user.deptName))
+                return users
             elif len(result) == 1:
                 return '姓名:{0}\n手机:{1}\n邮箱:{2}\n固话:{3}\n部门:{4}\n父级部门:{5}\n'.format(str(result[0].trueName),
                                                                                    str(result[0].mobliePhone),
@@ -155,6 +155,7 @@ def getAddress(msg):
                                                                                          str(user.telPhone),
                                                                                          str(user.deptName2),
                                                                                          str(user.deptName))
+                return users
             elif len(result) == 1:
                 return '姓名:{0}\n手机:{1}\n邮箱:{2}\n固话:{3}\n部门:{4}\n父级部门:{5}\n'.format(str(result[0].trueName),
                                                                                    str(result[0].mobliePhone),
@@ -214,7 +215,7 @@ def insertReplyLog(msg):
                     db.session.commit()
                     return "小助手将会准时发送"
                 else:
-                    msg.forward(test)
+                    msg.forward(zb_sf)
                     db.session.add(replyLog)
                     db.session.commit()
                     return "小助手转发成功"
@@ -248,17 +249,16 @@ def insertIntoLog(msg):
     message_log.message_from = msg.sender.name
     if msg.type == 'Text':
         message_log.content = msg.text
-        db.session.add(message_log)
-        db.session.commit()
     else:
-        save_path = os.sep.join([sourceSavePath, msg.type, msg.file_name])
-        try:
-            msg.get_file(save_path)
-            message_log.content = save_path
-            db.session.add(message_log)
-            db.session.commit()
-        except Exception as e:
-            print(e)
+        if mkdir(os.sep.join([messageFilePath, msg.type])):
+            save_path = os.sep.join([messageFilePath, msg.type, msg.file_name])
+            try:
+                msg.get_file(save_path)
+                message_log.content = save_path
+            except Exception as e:
+                print(e)
+    db.session.add(message_log)
+    db.session.commit()
 
 
 test = bot.groups().search("测试2")[0]
@@ -270,7 +270,7 @@ zwzx = bot.groups().search("智能网络中心")[0]
 zb_sf = bot.groups().search("总部及省分OSS2.0")[0]
 
 
-@bot.register([zgs, yxk])
+@bot.register(zgs)
 def reply_daily(msg):
     with app.app.app_context():
         return insertReplyLog(msg)
@@ -286,6 +286,7 @@ def save_5g(msg):
 def save_message(msg):
     with app.app.app_context():
         if msg.is_at:
+            insertIntoLog(msg)
             if "\u2005" in msg.text:
                 text = msg.text.strip().split("\u2005", 1)[1]
             else:

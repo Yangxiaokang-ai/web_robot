@@ -5,6 +5,8 @@ replySavePath = os.sep.join(["/home", "deployer", "ReplyFile"])
 g5_savePath = os.sep.join(["/home", "deployer", "g5_save"])
 sourceSavePath = os.sep.join(["/home", "deployer", "ReceiveFile", "Answer"])
 
+sendFilePath = os.sep.join(["E:", "deployer", "SendFile"])
+
 
 def mkdir(path):
     path = path.strip()
